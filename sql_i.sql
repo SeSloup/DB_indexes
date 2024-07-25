@@ -32,19 +32,22 @@ where date(p.payment_date) = '2005-07-30'
 		*/
 	
 
+-- create index idx_payment_date
+-- on `sakila`.payment(payment_date);
+	
+-- create index idx_rental_date
+-- on `sakila`.rental (rental_date);
+
+
 explain analyze
-with p as 
-	(select * from payment where date(payment_date) = '2005-07-30'),
-	c as 
-	(select customer_id, concat(last_name, ' ', first_name) full_name  from customer),
-	fi as
-	(select inventory_id, title from inventory i left join (select film_id, title from film) f on f.film_id=i.film_id)
-select distinct full_name, sum(p.amount) from p
-	left join c on p.customer_id = c.customer_id
-	left join rental r on r.customer_id = c.customer_id and p.payment_date = r.rental_date
-	left join fi on fi.inventory_id = r.inventory_id
-group by c.customer_id, fi.title;
+select distinct concat(last_name, ' ', first_name), sum(p.amount) from payment p
+	inner join customer c on p.customer_id = c.customer_id
+	inner join rental r on r.customer_id = c.customer_id and p.payment_date = r.rental_date
+	inner join inventory i on i.inventory_id = r.inventory_id
+	inner join film f on f.film_id=i.film_id
+ where payment_date >= '2005-07-30' and payment_date < '2005-07-31'
+group by c.customer_id, f.title;
 
 		/*
-		Sort with duplicate removal: c.full_name, `sum(p.amount)`  (actual time=13..13 rows=599 loops=1)
+		-> Sort with duplicate removal: `concat(last_name, ' ', first_name)`, `sum(p.amount)`  (actual time=7.75..7.78 rows=599 loops=1)
 		*/

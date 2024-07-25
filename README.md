@@ -67,7 +67,7 @@ group by c.customer_id, f.title;
 		-> Sort with duplicate removal: c.full_name, `sum(p.amount)`  (actual time=7.91..7.95 rows=599 loops=1)
 		*/
 ```
-![02](https://github.com/SeSloup/DB_indexes/blob/main/screens/02.png)
+![02](https://github.com/SeSloup/DB_indexes/blob/main/screens/02_.png)
 
 ![03](https://github.com/SeSloup/DB_indexes/blob/main/screens/03.png)
  * Слабые места:
